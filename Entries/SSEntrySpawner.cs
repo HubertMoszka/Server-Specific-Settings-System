@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UserSettings.GUIElements;
-using Mirror.LiteNetLib4Mirror;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
@@ -42,7 +41,7 @@ namespace UserSettings.ServerSpecific.Entries
 		private readonly List<VerticalLayoutGroup> _layoutGroups = new();
 		private readonly Dictionary<Type, GameObject> _templatesByType = new();
 
-		private static string PrefsKey => $"SrvSp_{LiteNetLib4MirrorNetworkManager.singleton.networkAddress}_Version";
+		private static string PrefsKey => $"SrvSp_{ServerSpecificSettingsSync.CurServerPrefsKey}_Version";
 
 		private static int ClientVersion
 		{

@@ -1,4 +1,3 @@
-using Mirror.LiteNetLib4Mirror;
 using System.Text;
 using Mirror;
 
@@ -72,6 +71,9 @@ namespace UserSettings.ServerSpecific
 		/// </summary>
 		public void ClientSendValue()
 		{
+			if (!NetworkClient.active)
+				return;
+
 			NetworkClient.Send(new SSSClientResponse(this));
 		}
 
@@ -138,7 +140,7 @@ namespace UserSettings.ServerSpecific
 			KeyGeneratorSb.Clear();
 
 			KeyGeneratorSb.Append("SrvSp_");
-			KeyGeneratorSb.Append(LiteNetLib4MirrorNetworkManager.singleton.networkAddress);
+			KeyGeneratorSb.Append(ServerSpecificSettingsSync.CurServerPrefsKey);
 
 			KeyGeneratorSb.Append('_');
 			KeyGeneratorSb.Append(ServerSpecificSettingsSync.GetCodeFromType(GetType()));

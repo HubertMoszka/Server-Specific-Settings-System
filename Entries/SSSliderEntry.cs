@@ -9,7 +9,7 @@ namespace UserSettings.ServerSpecific.Entries
 	/// <summary>
 	/// Server-specific entry representing a slider.
 	/// </summary>
-	public class SSSliderEntry : UserSettingsSlider, ISSEntry
+	public class SSSliderEntry : UserSettingsSlider, ISSEntry, IPointerUpHandler
 	{
 		private SSSliderSetting _setting;
 
@@ -28,11 +28,21 @@ namespace UserSettings.ServerSpecific.Entries
 			_inputField.SetTextWithoutNotify(string.Format(_setting.FinalDisplayFormat, valStr));
 		}
 
+		private void OnDisable()
+		{
+			if (_setting == null || !_setting.SyncDragging)
+				return;
+
+			_setting.SyncDragging = false;
+			_setting.ClientSendValue();
+		}
+
 		/// <inheritdoc />
 		protected override void SaveValue(float val)
 		{
 			PlayerPrefsSl.Set(_setting.PlayerPrefsKey, val);
 
+			_setting.SyncDragging = true;
 			_setting.SyncFloatValue = val;
 			_setting.ClientSendValue();
 		}
@@ -88,5 +98,19 @@ namespace UserSettings.ServerSpecific.Entries
 
 			UpdateFieldText(TargetUI.value);
 		}
+
+		/// <inheritdoc />
+		public void OnPointerUp(PointerEventData eventData)
+		{
+			if (eventData.button != PointerEventData.InputButton.Left)
+				return;
+
+			if (!_setting.SyncDragging)
+				return;
+
+			_setting.SyncDragging = false;
+			_setting.ClientSendValue();
+		}
+
 	}
 }

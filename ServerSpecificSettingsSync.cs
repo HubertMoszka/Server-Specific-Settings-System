@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mirror.LiteNetLib4Mirror;
 using NorthwoodLib.Pools;
 using Utils.Networking;
 using CentralAuth;
@@ -40,6 +41,31 @@ namespace UserSettings.ServerSpecific
 		/// <para /> Users send self-report when they receive collection settings, and every time they open or close the "Server-Specific" tab in the Settings menu.
 		/// </summary>
 		public static event Action<ReferenceHub, SSSUserStatusReport> ServerOnStatusReceived;
+
+		/// <summary>
+		/// Identifier of the server we're connected to, used for identification in PlayerPrefs.
+		/// <para /> This is equal to the ServerID (for verified servers) or IP address (as fallback)
+		/// </summary>
+		/// <remarks>
+		/// This is only valid for a remote client connected to the server.
+		/// </remarks>
+		public static string CurServerPrefsKey
+		{
+			get
+			{
+				string serverId = FavoriteAndHistory.ServerIDLastJoined;
+
+				if (string.IsNullOrEmpty(serverId))
+				{
+					// Fallback for non-verified servers.
+					return LiteNetLib4MirrorNetworkManager.singleton.networkAddress;
+				}
+				else
+				{
+					return serverId;
+				}
+			}
+		}
 
 		private static Type[] _allTypes;
 		private static byte[] _payloadBufferNonAlloc = new byte[NetworkWriter.DefaultCapacity];

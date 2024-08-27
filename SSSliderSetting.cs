@@ -19,6 +19,16 @@ namespace UserSettings.ServerSpecific
 		public int SyncIntValue => Mathf.RoundToInt(SyncFloatValue);
 
 		/// <summary>
+		/// Returns true if the player is actively dragging the slider. 
+		/// <br /> This can be used to save performance by ignoring inputs that don't require immediate response to user adjusting the value.
+		/// <br /> When user finishes dragging the slider, another event will be triggered with the final value (with this flag being false).
+		/// </summary>
+		/// <remarks>
+		/// Please note that users can adjust the float value using the input field next to the slider. This will result in this flag never being set to true.
+		/// </remarks>
+		public bool SyncDragging { get; set; }
+
+		/// <summary>
 		/// Default value to put on the slider.
 		/// </summary>
 		public float DefaultValue { get; private set; }
@@ -56,7 +66,7 @@ namespace UserSettings.ServerSpecific
 		/// Allows to add units or otherwise format the shown result.
 		/// </summary>
 		/// <remarks>
-		/// Must include a {0} somewhere.
+		/// Must include a {0} somewhere. The constructor will append it to the end if not specified elsewhere.
 		/// </remarks>
 		public string FinalDisplayFormat { get; private set; }
 
