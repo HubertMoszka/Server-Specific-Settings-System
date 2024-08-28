@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,9 +17,6 @@ namespace UserSettings.ServerSpecific.Entries
 
 		[SerializeField]
 		private TMP_InputField _inputField;
-
-		/// <inheritdoc />
-		public Type SettingType => typeof(SSSliderSetting);
 
 		private void UpdateFieldText(float value)
 		{
@@ -52,6 +48,12 @@ namespace UserSettings.ServerSpecific.Entries
 		{
 			_setting.SyncFloatValue = PlayerPrefsSl.Get(_setting.PlayerPrefsKey, _setting.DefaultValue);
 			return _setting.SyncFloatValue;
+		}
+
+		/// <inheritdoc />
+		public bool CheckCompatibility(ServerSpecificSettingBase setting)
+		{
+			return setting is SSSliderSetting;
 		}
 
 		/// <inheritdoc />

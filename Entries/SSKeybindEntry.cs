@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,15 +19,18 @@ namespace UserSettings.ServerSpecific.Entries
 		[SerializeField]
 		private SSEntryLabel _label;
 
-		/// <inheritdoc />
-		public Type SettingType => typeof(SSKeybindSetting);
-
 		/// <summary>
 		/// Applies keys suggested by the server.
 		/// </summary>
 		public void ApplySuggestion()
 		{
 			ApplyPressedKey(_setting.SuggestedKey);
+		}
+
+		/// <inheritdoc />
+		public bool CheckCompatibility(ServerSpecificSettingBase setting)
+		{
+			return setting is SSKeybindSetting;
 		}
 
 		/// <inheritdoc />

@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,9 +10,6 @@ namespace UserSettings.ServerSpecific.Entries
 	/// </summary>
 	public class SSTextAreaEntry : MonoBehaviour, ISSEntry
 	{
-		/// <inheritdoc />
-		public Type SettingType => typeof(SSTextArea);
-
 		[SerializeField]
 		private TMP_Text _shortText, _mainText;
 
@@ -31,6 +27,12 @@ namespace UserSettings.ServerSpecific.Entries
 
 		private SSTextArea.FoldoutMode _foldoutMode;
 		private SSTextArea _textArea;
+
+		/// <inheritdoc />
+		public bool CheckCompatibility(ServerSpecificSettingBase setting)
+		{
+			return setting is SSTextArea;
+		}
 
 		/// <inheritdoc />
 		public void Init(ServerSpecificSettingBase setting)
@@ -58,6 +60,7 @@ namespace UserSettings.ServerSpecific.Entries
 				case SSTextArea.FoldoutMode.NotCollapsable:
 					_toggle.isOn = true;
 					_mainText.raycastTarget = true;
+					_foldoutGroup.ExtendInstantly();
 					_disableWhenNotCollapsable.ForEach(x => x.SetActive(false));
 					break;
 			}

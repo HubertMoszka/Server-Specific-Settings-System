@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -19,10 +18,13 @@ namespace UserSettings.ServerSpecific.Entries
 		private SSButton _setting;
 
 		/// <inheritdoc />
-		public Type SettingType => typeof(SSButton);
+		public override float HoldTime => _holdTime;
 
 		/// <inheritdoc />
-		public override float HoldTime => _holdTime;
+		public bool CheckCompatibility(ServerSpecificSettingBase setting)
+		{
+			return setting is SSButton;
+		}
 
 		/// <inheritdoc />
 		public void Init(ServerSpecificSettingBase settingBase)

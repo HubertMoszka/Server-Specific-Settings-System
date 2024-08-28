@@ -11,6 +11,8 @@ namespace UserSettings.ServerSpecific.Examples
 		/// <inheritdoc />
 		public override void Activate()
 		{
+			string[] dropdownOptions = new string[] { "Option 1", "Option 2", "Option 3", "Option 4" };
+
 			ServerSpecificSettingsSync.DefinedSettings = new ServerSpecificSettingBase[]
 			{
 				// Without hints
@@ -21,7 +23,8 @@ namespace UserSettings.ServerSpecific.Examples
 				new SSSliderSetting(null, "SliderSetting", 0, 1),
 				new SSPlaintextSetting(null, "Plaintext"),
 				new SSKeybindSetting(null, "KeybindSetting"),
-				new SSDropdownSetting(null, "DropdownSetting", new string[] { "Option 1", "Option 2", "Option 3", "Option 4" }),
+				new SSDropdownSetting(null, "DropdownSetting", dropdownOptions),
+				new SSDropdownSetting(null, "Scrollable DropdownSetting", dropdownOptions, entryType: SSDropdownSetting.DropdownEntryType.Scrollable),
 				new SSButton(null, "Button", "Press me!"),
 
 				// With hints
@@ -30,7 +33,8 @@ namespace UserSettings.ServerSpecific.Examples
 				new SSSliderSetting(null, "Another SliderSetting", 0, 1, hint: "Sliders store a numeric value within a defined range."),
 				new SSPlaintextSetting(null, "Another Plaintext", hint: "Plaintext fields store any provided text."),
 				new SSKeybindSetting(null, "Another KeybindSetting", hint: "Allows checking if the player is currently holding the action key."),
-				new SSDropdownSetting(null, "Another DropdownSetting", new string[] { "Option 1", "Option 2", "Option 3", "Option 4" }, hint: "Stores an integer value between 0 and the length of options minus 1."),
+				new SSDropdownSetting(null, "Another DropdownSetting", dropdownOptions, hint: "Stores an integer value between 0 and the length of options minus 1."),
+				new SSDropdownSetting(null, "Another Scrollable DropdownSetting", dropdownOptions, entryType: SSDropdownSetting.DropdownEntryType.Scrollable, hint: "Alternative to dropdown. API is the same as in regular dropdown, but the client-side entry behaves differently."),
 				new SSButton(null, "Another Button", "Press me! (again)", hint: "Triggers an event whenever it is pressed."),
 			};
 

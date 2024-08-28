@@ -15,6 +15,7 @@ namespace UserSettings.ServerSpecific.Examples
 			new SSFieldsDemoExample(),
 			new SSAbilityExample(),
 			new SSTextAreaExample(),
+			new SSPagesExample(),
 			new SSPrimitiveSpawnerExample()
 		};
 

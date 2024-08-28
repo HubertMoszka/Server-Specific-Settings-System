@@ -19,6 +19,11 @@ namespace UserSettings.ServerSpecific
 		public int DefaultOptionIndex { get; private set; }
 
 		/// <summary>
+		/// Type of entry to be spawned.
+		/// </summary>
+		public DropdownEntryType EntryType { get; private set; }
+
+		/// <summary>
 		/// Index selected by user, not validated.
 		/// </summary>
 		public int SyncSelectionIndexRaw { get; internal set; }
@@ -69,7 +74,7 @@ namespace UserSettings.ServerSpecific
 		/// <param name="options">List of options displayed in the dropdown.</param>
 		/// <param name="defaultOptionIndex">Index of <paramref name="options"/> displayed as default value.</param>
 		/// <param name="hint">Causes the "(?)" icon to appear next to the label. Can be used to provide additional information. Null or empty to disable.</param>
-		public SSDropdownSetting(int? id, string label, string[] options, int defaultOptionIndex = 0, string hint = null)
+		public SSDropdownSetting(int? id, string label, string[] options, int defaultOptionIndex = 0, DropdownEntryType entryType = DropdownEntryType.Regular, string hint = null)
 		{
 			SetId(id, label);
 
@@ -80,6 +85,7 @@ namespace UserSettings.ServerSpecific
 			HintDescription = hint;
 
 			Options = options;
+			EntryType = entryType;
 			DefaultOptionIndex = defaultOptionIndex;
 		}
 
@@ -95,6 +101,8 @@ namespace UserSettings.ServerSpecific
 			base.SerializeEntry(writer);
 
 			writer.WriteByte((byte) DefaultOptionIndex);
+			writer.WriteByte((byte) EntryType);
+
 			writer.WriteByte((byte) Options.Length);
 			Options.ForEach(writer.WriteString);
 		}
@@ -105,10 +113,22 @@ namespace UserSettings.ServerSpecific
 			base.DeserializeEntry(reader);
 
 			DefaultOptionIndex = reader.ReadByte();
-			Options = new string[reader.ReadByte()];
+			EntryType = (DropdownEntryType) reader.ReadByte();
 
-			for (int i = 0; i < Options.Length; i++)
-				Options[i] = reader.ReadString();
+			int optionsLen = reader.ReadByte();
+
+			if (optionsLen > 0)
+			{
+				Options = new string[optionsLen];
+
+				for (int i = 0; i < Options.Length; i++)
+					Options[i] = reader.ReadString();
+			}
+			else
+			{
+				// Fallback when no options are provided. Dropdown with zero options is undefined behavior.
+				Options = new string[] { string.Empty };
+			}
 		}
 
 		/// <inheritdoc />
@@ -118,10 +138,42 @@ namespace UserSettings.ServerSpecific
 			writer.WriteByte((byte) SyncSelectionIndexRaw);
 		}
 
+		/// <inheritdoc />
 		public override void DeserializeValue(NetworkReader reader)
 		{
 			base.DeserializeValue(reader);
 			SyncSelectionIndexRaw = reader.ReadByte();
+		}
+
+		/// <summary>
+		/// Type of dropdown entry to display.
+		/// </summary>
+		public enum DropdownEntryType
+		{
+			/// <summary>
+			/// Default dropdown entry, like the one used to select your monitor in video settings.
+			/// </summary>
+			Regular,
+
+			/// <summary>
+			/// Displays two arrows to the sides, forcing users to scroll between options (one by one), without being able to get the list of options. Arrows become inactive when user reaches their end of the list.
+			/// </summary>
+			Scrollable,
+
+			/// <summary>
+			/// Displays two arrows to the sides, forcing users to scroll between options (one by one), without being able to get the list of options. Arrows never become inactive, and will loop over the options.
+			/// </summary>
+			ScrollableLoop,
+
+			/// <summary>
+			/// Displays two arrows to the sides, allowing users to scroll between options. Dropdown menu is still available if preferred. Arrows become inactive when user reaches their end of the list.
+			/// </summary>
+			Hybrid,
+
+			/// <summary>
+			/// Displays two arrows to the sides, allowing users to scroll between options. Dropdown menu is still available if preferred. Arrows never become inactive, and will loop over the options.
+			/// </summary>
+			HybridLoop
 		}
 	}
 }

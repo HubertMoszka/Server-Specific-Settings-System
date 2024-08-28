@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -24,10 +23,13 @@ namespace UserSettings.ServerSpecific.Entries
 		private TMP_Text _placeholder;
 
 		/// <inheritdoc />
-		public Type SettingType => typeof(SSPlaintextSetting);
+		protected override UnityEvent<string> OnValueChangedEvent => TargetUI.onEndEdit;
 
 		/// <inheritdoc />
-		protected override UnityEvent<string> OnValueChangedEvent => TargetUI.onEndEdit;
+		public bool CheckCompatibility(ServerSpecificSettingBase setting)
+		{
+			return setting is SSPlaintextSetting;
+		}
 
 		/// <inheritdoc />
 		public void Init(ServerSpecificSettingBase setting)

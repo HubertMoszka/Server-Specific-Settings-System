@@ -238,7 +238,7 @@ namespace UserSettings.ServerSpecific
 		/// <remarks>
 		/// The collection must only consist of entries that can be found in <see cref="DefinedSettings"/> (at least types and IDs must match), but may be partial (so it doesn't include all entries).
 		/// </remarks>
-		public static void SendToPlayer(ReferenceHub hub, ServerSpecificSettingBase[] collection, int? versionOverride)
+		public static void SendToPlayer(ReferenceHub hub, ServerSpecificSettingBase[] collection, int? versionOverride = null)
 		{
 			if (!NetworkServer.active)
 				return;

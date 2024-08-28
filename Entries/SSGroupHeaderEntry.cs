@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace UserSettings.ServerSpecific.Entries
@@ -15,7 +14,10 @@ namespace UserSettings.ServerSpecific.Entries
 		private float _normalPadding, _shortPadding;
 
 		/// <inheritdoc />
-		public Type SettingType => typeof(SSGroupHeader);
+		public bool CheckCompatibility(ServerSpecificSettingBase setting)
+		{
+			return setting is SSGroupHeader;
+		}
 
 		/// <inheritdoc />
 		public void Init(ServerSpecificSettingBase setting)

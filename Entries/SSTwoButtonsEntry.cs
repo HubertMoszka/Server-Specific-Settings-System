@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UserSettings.GUIElements;
@@ -19,9 +18,6 @@ namespace UserSettings.ServerSpecific.Entries
 		private SSEntryLabel _label;
 
 		/// <inheritdoc />
-		public Type SettingType => typeof(SSTwoButtonsSetting);
-
-		/// <inheritdoc />
 		protected override void SaveValue(bool val)
 		{
 			PlayerPrefsSl.Set(_setting.PlayerPrefsKey, val);
@@ -38,6 +34,12 @@ namespace UserSettings.ServerSpecific.Entries
 		}
 
 		/// <inheritdoc />
+		public bool CheckCompatibility(ServerSpecificSettingBase setting)
+		{
+			return setting is SSTwoButtonsSetting;
+		}
+
+		/// <inheritdoc />
 		public void Init(ServerSpecificSettingBase setting)
 		{
 			_setting = setting as SSTwoButtonsSetting;
@@ -47,6 +49,7 @@ namespace UserSettings.ServerSpecific.Entries
 			_optionB.text = _setting.OptionB;
 
 			Setup();
+			UpdateColors(true);
 		}
 	}
 }

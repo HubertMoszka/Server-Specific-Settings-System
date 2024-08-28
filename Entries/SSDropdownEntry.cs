@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UserSettings.GUIElements;
@@ -6,7 +5,7 @@ using UserSettings.GUIElements;
 namespace UserSettings.ServerSpecific.Entries
 {
 	/// <summary>
-	/// Server-specific entry representing a header group.
+	/// Server-specific entry representing a dropdown menu.
 	/// </summary>
 	public class SSDropdownEntry : UserSettingsDropdown, ISSEntry
 	{
@@ -14,9 +13,6 @@ namespace UserSettings.ServerSpecific.Entries
 
 		[SerializeField]
 		private SSEntryLabel _label;
-
-		/// <inheritdoc />
-		public Type SettingType => typeof(SSDropdownSetting);
 
 		/// <inheritdoc />
 		protected override void SaveValue(int val)
@@ -35,7 +31,13 @@ namespace UserSettings.ServerSpecific.Entries
 		}
 
 		/// <inheritdoc />
-		public void Init(ServerSpecificSettingBase setting)
+		public virtual bool CheckCompatibility(ServerSpecificSettingBase setting)
+		{
+			return setting is SSDropdownSetting dropdown && dropdown.EntryType == SSDropdownSetting.DropdownEntryType.Regular;
+		}
+
+		/// <inheritdoc />
+		public virtual void Init(ServerSpecificSettingBase setting)
 		{
 			_setting = setting as SSDropdownSetting;
 			_label.Set(_setting);

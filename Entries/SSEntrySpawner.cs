@@ -37,9 +37,9 @@ namespace UserSettings.ServerSpecific.Entries
 		[SerializeField]
 		private GameObject[] _newSettingsWarning;
 
+		private ISSEntry[] _cachedComponents;
 		private readonly List<GameObject> _spawnedEntries = new();
 		private readonly List<VerticalLayoutGroup> _layoutGroups = new();
-		private readonly Dictionary<Type, GameObject> _templatesByType = new();
 
 		private static string PrefsKey => $"SrvSp_{ServerSpecificSettingsSync.CurServerPrefsKey}_Version";
 
@@ -134,7 +134,7 @@ namespace UserSettings.ServerSpecific.Entries
 
 		private void SpawnEntry(ServerSpecificSettingBase setting)
 		{
-			GameObject template = GetTemplateForType(setting.GetType());
+			GameObject template = GetTemplateForSetting(setting);
 			GameObject instance = Instantiate(template, _entriesParentTr);
 
 			instance.SetActive(true);
@@ -143,33 +143,38 @@ namespace UserSettings.ServerSpecific.Entries
 			_spawnedEntries.Add(instance);
 		}
 
-		private GameObject GetTemplateForType(Type type)
+		private GameObject GetTemplateForSetting(ServerSpecificSettingBase setting)
 		{
-			if (_templatesByType.TryGetValue(type, out GameObject cacheHit))
-				return cacheHit;
+			int len = _entryTemplates.Length;
+			_cachedComponents ??= new ISSEntry[len];
 
-			GameObject foundTemplate = null;
-
-			foreach (GameObject entryGameObject in _entryTemplates)
+			for (int i = 0; i < len; i++)
 			{
-				ISSEntry entry = entryGameObject.GetComponentInChildren<ISSEntry>(true);
+				ISSEntry entry = _cachedComponents[i];
 
 				if (entry == null)
 				{
-					Debug.LogError("Invalid server-specific settings entry template: " + entryGameObject.name);
-					continue;
+					entry = FindEntryInTemplate(_entryTemplates[i]);
+					_cachedComponents[i] = entry;
 				}
 
-				if (entry.SettingType == type)
-					foundTemplate = entryGameObject;
-
-				_templatesByType[entry.SettingType] = entryGameObject;
+				if (entry.CheckCompatibility(setting))
+				{
+					return _entryTemplates[i];
+				}
 			}
 
-			if (foundTemplate == null)
-				throw new NullReferenceException("Unable to find entry template for type: " + type.FullName);
+			throw new InvalidOperationException("This setting does not have a compatible entry: " + setting);
+		}
 
-			return foundTemplate;
+		private ISSEntry FindEntryInTemplate(GameObject template)
+		{
+			ISSEntry newComp = template.GetComponentInChildren<ISSEntry>(true);
+
+			if ((newComp as UnityEngine.Object) == null)
+				throw new InvalidOperationException($"This entry template is not valid: " + template.name);
+
+			return newComp;
 		}
 
 		private static void ClientSendReport()
